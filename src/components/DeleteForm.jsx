@@ -1,15 +1,15 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Box from "@mui/material/Box";
-import TextField from "@mui/material/TextField";
+
 import Button from "@mui/material/Button";
-import { useDispatch } from "react-redux";
-import { newIssueAction } from "../redux/actions";
+import { useDispatch, useSelector } from "react-redux";
+import { loadCurrentIssue } from "../redux/actions";
 
 import Modal from "@mui/material/Modal";
 
 import IconButton from "@mui/material/IconButton";
 import DeleteIcon from "@mui/icons-material/Delete";
-import { deleteIssueAction } from "../redux/actions";
+import { deleteIssue } from "../redux/actions";
 
 const style = {
 	position: "absolute",
@@ -25,13 +25,35 @@ const style = {
 
 const DeleteForm = ({ issueId }) => {
 	const [open, setOpen] = useState(false);
-	const handleOpen = () => setOpen(true);
+	const handleOpen = () => {
+		setOpen(true);
+		dispatch(loadCurrentIssue(issueId));
+	};
 	const handleClose = () => setOpen(false);
-
+	const [states, setStates] = useState({
+		id: "",
+		title: "",
+		state: "",
+		url: "",
+		created: "",
+		updated: "",
+	});
+	const { id, title, state, url, created, updated } = states;
 	const dispatch = useDispatch();
+	const { issue } = useSelector((states) => states.data);
+
+	// useEffect(() => {
+	// 	dispatch(loadCurrentIssue(issueId));
+	// }, []);
+
+	useEffect(() => {
+		if (issue) {
+			setStates({ ...issue });
+		}
+	}, [issue]);
 
 	const handleDelete = (id) => {
-		dispatch(deleteIssueAction(id));
+		dispatch(deleteIssue(id));
 	};
 
 	return (
@@ -48,17 +70,20 @@ const DeleteForm = ({ issueId }) => {
 				<Box sx={style}>
 					<h2>Are you sure?</h2>
 					<br />
-					<p>Id:</p>
+					<p>
+						Id:
+						{id}
+					</p>
 					<br />
-					<p>Title:</p>
+					<p>Title:{title}</p>
 					<br />
-					<p>State:</p>
+					<p>State:{state}</p>
 					<br />
-					<p>Url:</p>
+					<p>Url:{url}</p>
 					<br />
-					<p>Created at:</p>
+					<p>Created at:{created}</p>
 					<br />
-					<p>Updated at:</p>
+					<p>Updated at:{updated}</p>
 					<br />
 					<Button variant="text" onClick={() => handleDelete(issueId)}>
 						Delete

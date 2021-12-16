@@ -3,7 +3,7 @@ import Box from "@mui/material/Box";
 import TextField from "@mui/material/TextField";
 import Button from "@mui/material/Button";
 import { useDispatch } from "react-redux";
-import { newIssueAction } from "../redux/actions";
+import { newIssue } from "../redux/actions";
 
 import Modal from "@mui/material/Modal";
 
@@ -25,6 +25,7 @@ const style = {
 const AddForm = () => {
 	const [open, setOpen] = useState(false);
 	const handleOpen = () => setOpen(true);
+
 	const handleClose = () => setOpen(false);
 
 	const [issue, setIssue] = useState({
@@ -45,7 +46,7 @@ const AddForm = () => {
 
 	const handleSubmit = (e) => {
 		e.preventDefault();
-		dispatch(newIssueAction(issue));
+		dispatch(newIssue(issue));
 		handleClose();
 	};
 

@@ -1,9 +1,10 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Box from "@mui/material/Box";
 import TextField from "@mui/material/TextField";
 import Button from "@mui/material/Button";
-import { useDispatch } from "react-redux";
-import { newIssueAction } from "../redux/actions";
+
+import { useDispatch, useSelector } from "react-redux";
+import { loadCurrentIssue, editIssue } from "../redux/actions";
 
 import Modal from "@mui/material/Modal";
 
@@ -23,12 +24,15 @@ const style = {
 	p: 4,
 };
 
-const EditForm = () => {
+const EditForm = ({ issueId }) => {
 	const [open, setOpen] = useState(false);
-	const handleOpen = () => setOpen(true);
+	const handleOpen = () => {
+		setOpen(true);
+		dispatch(loadCurrentIssue(issueId));
+	};
 	const handleClose = () => setOpen(false);
 
-	const [issue, setIssue] = useState({
+	const [states, setStates] = useState({
 		id: "",
 		title: "",
 		state: "",
@@ -36,17 +40,29 @@ const EditForm = () => {
 		created: "",
 		updated: "",
 	});
-	const { id, title, state, url, created, updated } = issue;
+	const { id, title, state, url, created, updated } = states;
 	const dispatch = useDispatch();
+
+	const { issue } = useSelector((states) => states.data);
+
+	// useEffect(() => {
+	// 	dispatch(loadCurrentIssue(issueId));
+	// }, []);
+
+	useEffect(() => {
+		if (issue) {
+			setStates({ ...issue });
+		}
+	}, [issue]);
 
 	const handleChange = (e) => {
 		const { name, value } = e.target;
-		setIssue({ ...issue, [name]: value });
+		setStates({ ...states, [name]: value });
 	};
 
 	const handleSubmit = (e) => {
 		e.preventDefault();
-		dispatch(newIssueAction(issue));
+		dispatch(editIssue(states, issueId));
 		handleClose();
 	};
 
@@ -63,6 +79,7 @@ const EditForm = () => {
 			>
 				<Box sx={style}>
 					<h2>Edit</h2>
+					{/* <p>{issueId}</p> */}
 					<form onSubmit={handleSubmit}>
 						<TextField
 							id="standard-search"
@@ -73,6 +90,7 @@ const EditForm = () => {
 							variant="standard"
 							helperText="Required field"
 							onChange={handleChange}
+							// onChange={(e) => setId(e.target.value)}
 						/>
 						<br />
 
@@ -85,6 +103,7 @@ const EditForm = () => {
 							helperText="Required field"
 							variant="standard"
 							onChange={handleChange}
+							// onChange={(e) => setTitle(e.target.value)}
 						/>
 
 						<br />
@@ -98,6 +117,7 @@ const EditForm = () => {
 							helperText="Required field"
 							variant="standard"
 							onChange={handleChange}
+							// onChange={(e) => setState(e.target.value)}
 						/>
 
 						<br />
@@ -109,6 +129,7 @@ const EditForm = () => {
 							type="text"
 							variant="standard"
 							onChange={handleChange}
+							// onChange={(e) => setUrl(e.target.value)}
 						/>
 
 						<br />
@@ -120,6 +141,7 @@ const EditForm = () => {
 							type="text"
 							variant="standard"
 							onChange={handleChange}
+							// onChange={(e) => setCreated(e.target.value)}
 						/>
 						<br />
 
@@ -131,6 +153,7 @@ const EditForm = () => {
 							type="text"
 							variant="standard"
 							onChange={handleChange}
+							// onChange={(e) => setUpdated(e.target.value)}
 						/>
 
 						<br />

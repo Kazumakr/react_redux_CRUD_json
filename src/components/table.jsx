@@ -1,4 +1,4 @@
-import * as React from "react";
+import React, { useEffect } from "react";
 import PropTypes from "prop-types";
 import Box from "@mui/material/Box";
 import Table from "@mui/material/Table";
@@ -12,10 +12,7 @@ import TableSortLabel from "@mui/material/TableSortLabel";
 import Paper from "@mui/material/Paper";
 import { visuallyHidden } from "@mui/utils";
 
-import IconButton from "@mui/material/IconButton";
-import DeleteIcon from "@mui/icons-material/Delete";
-
-import { deleteIssueAction } from "../redux/actions";
+import { loadIssues } from "../redux/actions";
 
 import { useDispatch, useSelector } from "react-redux";
 import AddForm from "./AddForm";
@@ -38,8 +35,6 @@ function getComparator(order, orderBy) {
 		: (a, b) => -descendingComparator(a, b, orderBy);
 }
 
-// This method is created for cross-browser compatibility, if you don't
-// need to support IE11, you can use Array.prototype.sort() directly
 function stableSort(array, comparator) {
 	const stabilizedThis = array.map((el, index) => [el, index]);
 	stabilizedThis.sort((a, b) => {
@@ -123,10 +118,7 @@ function EnhancedTableHead(props) {
 					</TableCell>
 				))}
 				<TableCell align={"right"}>
-					<IconButton>
-						<AddForm />
-						{/* <AddIcon /> */}
-					</IconButton>
+					<AddForm />
 				</TableCell>
 			</TableRow>
 		</TableHead>
@@ -157,7 +149,7 @@ export default function EnhancedTable() {
 
 	const handleSelectAllClick = (event) => {
 		if (event.target.checked) {
-			const newSelecteds = issueList.issues.map((n) => n.name);
+			const newSelecteds = issues.map((n) => n.name);
 			setSelected(newSelecteds);
 			return;
 		}
@@ -193,50 +185,43 @@ export default function EnhancedTable() {
 		setPage(0);
 	};
 
-	const isSelected = (name) => selected.indexOf(name) !== -1;
+	// const isSelected = (name) => selected.indexOf(name) !== -1;
 
 	// Avoid a layout jump when reaching the last page with empty rows.
 	const emptyRows =
-		page > 0
-			? Math.max(0, (1 + page) * rowsPerPage - issueList.issues.length)
-			: 0;
+		page > 0 ? Math.max(0, (1 + page) * rowsPerPage - issues.length) : 0;
 
-	// const dispatch = useDispatch();
-	const issueList = useSelector((state) => state.issues);
-	// const handleDelete = (id) => {
-	// 	dispatch(deleteIssueAction(id));
-	// };
+	const dispatch = useDispatch();
+	const { issues } = useSelector((state) => state.data);
+	useEffect(() => {
+		dispatch(loadIssues());
+	}, []);
+
 	return (
 		<Box sx={{ width: "100%" }}>
 			<Paper sx={{ width: "100%", mb: 2 }}>
 				<TableContainer>
 					<Table sx={{ minWidth: 750 }} aria-labelledby="tableTitle">
 						<EnhancedTableHead
-							numSelected={selected.length}
 							order={order}
 							orderBy={orderBy}
 							onSelectAllClick={handleSelectAllClick}
 							onRequestSort={handleRequestSort}
-							rowCount={issueList.issues.length}
+							rowCount={issues.length}
 						/>
 						<TableBody>
-							{/* if you don't need to support IE11, you can replace the `stableSort` call with:
-                 rows.slice().sort(getComparator(order, orderBy)) */}
-							{stableSort(issueList.issues, getComparator(order, orderBy))
+							{stableSort(issues, getComparator(order, orderBy))
 								.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-								.map((row, index) => {
-									const isItemSelected = isSelected(row.name);
+								.map((issue, index) => {
 									const labelId = `enhanced-table-checkbox-${index}`;
 
 									return (
 										<TableRow
 											hover
-											onClick={(event) => handleClick(event, row.name)}
+											onClick={(event) => handleClick(event, issue.name)}
 											role="checkbox"
-											aria-checked={isItemSelected}
 											tabIndex={-1}
-											key={row.id}
-											selected={isItemSelected}
+											key={issue.id}
 										>
 											<TableCell padding="checkbox"></TableCell>
 											<TableCell
@@ -245,20 +230,16 @@ export default function EnhancedTable() {
 												scope="row"
 												padding="none"
 											>
-												{row.id}
+												{issue.id}
 											</TableCell>
-											<TableCell align="right">{row.title}</TableCell>
-											<TableCell align="right">{row.state}</TableCell>
-											<TableCell align="right">{row.url}</TableCell>
-											<TableCell align="right">{row.created}</TableCell>
-											<TableCell align="right">{row.updated}</TableCell>
+											<TableCell align="right">{issue.title}</TableCell>
+											<TableCell align="right">{issue.state}</TableCell>
+											<TableCell align="right">{issue.url}</TableCell>
+											<TableCell align="right">{issue.created}</TableCell>
+											<TableCell align="right">{issue.updated}</TableCell>
 											<TableCell align="right">
-												<EditForm />
-
-												<IconButton aria-label="delete">
-													{/* <DeleteIcon onClick={() => handleDelete(row.id)} /> */}
-													<DeleteForm issueId={row.id} />
-												</IconButton>
+												<EditForm issueId={issue.id} />
+												<DeleteForm issueId={issue.id} />
 											</TableCell>
 										</TableRow>
 									);
@@ -269,7 +250,7 @@ export default function EnhancedTable() {
 				<TablePagination
 					rowsPerPageOptions={[5, 10, 25, 100]}
 					component="div"
-					count={issueList.issues.length}
+					count={issues.length}
 					rowsPerPage={rowsPerPage}
 					page={page}
 					onPageChange={handleChangePage}
