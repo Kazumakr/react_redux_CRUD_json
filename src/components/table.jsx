@@ -164,7 +164,6 @@ export default function EnhancedTable({ searchInput, filteredResults }) {
 	if (searchInput !== undefined && searchInput.length >= 1) {
 		issues = filteredResults;
 	}
-	console.log(issues);
 
 	return (
 		<Box sx={{ width: "100%" }}>
