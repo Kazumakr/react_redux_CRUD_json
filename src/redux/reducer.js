@@ -10,16 +10,6 @@ const initialState = {
 	issues: [],
 	issue: {},
 	loading: false,
-	// issues: [
-	// 	{
-	// 		id: 1,
-	// 		title: "test",
-	// 		state: "test",
-	// 		url: "test",
-	// 		created: "test",
-	// 		updated: "test",
-	// 	},
-	// ],
 };
 
 const issueReducers = (state = initialState, action) => {
@@ -30,7 +20,6 @@ const issueReducers = (state = initialState, action) => {
 			return {
 				...state,
 				loading: false,
-				// issues: state.issues.filter((issue) => issue.id !== action.payload),
 			};
 		case GET_ISSUE:
 			return {

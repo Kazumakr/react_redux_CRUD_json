@@ -1,5 +1,6 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import Box from "@mui/material/Box";
+import { pink } from "@mui/material/colors";
 
 import Button from "@mui/material/Button";
 import { useDispatch, useSelector } from "react-redux";
@@ -16,9 +17,8 @@ const style = {
 	top: "50%",
 	left: "50%",
 	transform: "translate(-50%, -50%)",
-	width: 400,
+	width: 300,
 	bgcolor: "background.paper",
-	border: "2px solid #000",
 	boxShadow: 24,
 	p: 4,
 };
@@ -30,28 +30,8 @@ const DeleteForm = ({ issueId }) => {
 		dispatch(loadCurrentIssue(issueId));
 	};
 	const handleClose = () => setOpen(false);
-	const [states, setStates] = useState({
-		id: "",
-		title: "",
-		state: "",
-		url: "",
-		created: "",
-		updated: "",
-	});
-	const { id, title, state, url, created, updated } = states;
 	const dispatch = useDispatch();
 	const { issue } = useSelector((states) => states.data);
-
-	// useEffect(() => {
-	// 	dispatch(loadCurrentIssue(issueId));
-	// }, []);
-
-	useEffect(() => {
-		if (issue) {
-			setStates({ ...issue });
-		}
-	}, [issue]);
-
 	const handleDelete = (id) => {
 		dispatch(deleteIssue(id));
 	};
@@ -59,7 +39,7 @@ const DeleteForm = ({ issueId }) => {
 	return (
 		<>
 			<IconButton>
-				<DeleteIcon onClick={handleOpen} />
+				<DeleteIcon sx={{ color: pink[500] }} onClick={handleOpen} />
 			</IconButton>
 			<Modal
 				open={open}
@@ -69,22 +49,12 @@ const DeleteForm = ({ issueId }) => {
 			>
 				<Box sx={style}>
 					<h2>Are you sure?</h2>
-					<br />
-					<p>
-						Id:
-						{id}
-					</p>
-					<br />
-					<p>Title:{title}</p>
-					<br />
-					<p>State:{state}</p>
-					<br />
-					<p>Url:{url}</p>
-					<br />
-					<p>Created at:{created}</p>
-					<br />
-					<p>Updated at:{updated}</p>
-					<br />
+					{issue.id && <p>Id:{issue.id}</p>}
+					{issue.id && <p>Title:{issue.title}</p>}
+					{issue.state && <p>State:{issue.state}</p>}
+					{issue.url && <p>Url:{issue.url}</p>}
+					{issue.created && <p>Created at:{issue.created}</p>}
+					{issue.updated && <p>Updated at:{issue.updated}</p>}
 					<Button variant="text" onClick={() => handleDelete(issueId)}>
 						Delete
 					</Button>

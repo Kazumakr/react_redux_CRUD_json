@@ -29,7 +29,7 @@ const Header = () => {
 							Reload data:
 						</Typography>
 						<IconButton>
-							<RefreshIcon onClick={refreshPage} />
+							<RefreshIcon style={{ color: "white" }} onClick={refreshPage} />
 						</IconButton>
 					</Toolbar>
 				</AppBar>

@@ -2,9 +2,11 @@ import React, { useState, useEffect } from "react";
 import Box from "@mui/material/Box";
 import TextField from "@mui/material/TextField";
 import Button from "@mui/material/Button";
+import { pink } from "@mui/material/colors";
 
 import { useDispatch, useSelector } from "react-redux";
 import { loadCurrentIssue, editIssue } from "../redux/actions";
+import { createTheme, ThemeProvider } from "@mui/material/styles";
 
 import Modal from "@mui/material/Modal";
 
@@ -19,11 +21,16 @@ const style = {
 	transform: "translate(-50%, -50%)",
 	width: 400,
 	bgcolor: "background.paper",
-	border: "2px solid #000",
 	boxShadow: 24,
 	p: 4,
 };
-
+const theme = createTheme({
+	palette: {
+		primary: {
+			main: "#000",
+		},
+	},
+});
 const EditForm = ({ issueId }) => {
 	const [open, setOpen] = useState(false);
 	const handleOpen = () => {
@@ -45,10 +52,6 @@ const EditForm = ({ issueId }) => {
 
 	const { issue } = useSelector((states) => states.data);
 
-	// useEffect(() => {
-	// 	dispatch(loadCurrentIssue(issueId));
-	// }, []);
-
 	useEffect(() => {
 		if (issue) {
 			setStates({ ...issue });
@@ -69,7 +72,7 @@ const EditForm = ({ issueId }) => {
 	return (
 		<>
 			<IconButton>
-				<EditIcon onClick={handleOpen} />
+				<EditIcon sx={{ color: pink[500] }} onClick={handleOpen} />
 			</IconButton>
 			<Modal
 				open={open}
@@ -78,46 +81,56 @@ const EditForm = ({ issueId }) => {
 				aria-describedby="modal-modal-description"
 			>
 				<Box sx={style}>
-					<h2>Edit</h2>
-					{/* <p>{issueId}</p> */}
+					<h2>Issue id:{issueId}</h2>
+
 					<form onSubmit={handleSubmit}>
 						<TextField
 							id="standard-search"
-							label="id*"
+							label="id"
 							name="id"
 							value={id}
 							type="text"
 							variant="standard"
-							helperText="Required field"
+							error={id === ""}
+							helperText={id === "" ? "Required field" : " "}
 							onChange={handleChange}
-							// onChange={(e) => setId(e.target.value)}
+							fullWidth
+							margin="normal"
+							required
 						/>
 						<br />
 
 						<TextField
 							id="standard-helperText"
-							label="Title*"
+							label="Title"
 							name="title"
 							value={title}
 							type="text"
-							helperText="Required field"
+							error={title === ""}
+							helperText={title === "" ? "Required field" : " "}
 							variant="standard"
 							onChange={handleChange}
-							// onChange={(e) => setTitle(e.target.value)}
+							fullWidth
+							margin="normal"
+							required
 						/>
 
 						<br />
 
 						<TextField
 							id="standard-helperText"
-							label="State*"
+							label="State"
 							name="state"
 							value={state}
 							type="text"
-							helperText="Required field"
+							error={state === ""}
+							helperText={state === "" ? "Required field" : ""}
 							variant="standard"
 							onChange={handleChange}
-							// onChange={(e) => setState(e.target.value)}
+							fullWidth
+							margin="normal"
+							required
+							inputProps={{ maxLength: 10 }}
 						/>
 
 						<br />
@@ -129,7 +142,8 @@ const EditForm = ({ issueId }) => {
 							type="text"
 							variant="standard"
 							onChange={handleChange}
-							// onChange={(e) => setUrl(e.target.value)}
+							fullWidth
+							margin="normal"
 						/>
 
 						<br />
@@ -141,7 +155,8 @@ const EditForm = ({ issueId }) => {
 							type="text"
 							variant="standard"
 							onChange={handleChange}
-							// onChange={(e) => setCreated(e.target.value)}
+							fullWidth
+							margin="normal"
 						/>
 						<br />
 
@@ -153,16 +168,23 @@ const EditForm = ({ issueId }) => {
 							type="text"
 							variant="standard"
 							onChange={handleChange}
-							// onChange={(e) => setUpdated(e.target.value)}
+							fullWidth
+							margin="normal"
 						/>
 
 						<br />
-						<Button variant="text" type="submit">
-							Save
-						</Button>
-						<Button variant="text" onClick={handleClose}>
-							Cancel
-						</Button>
+						<ThemeProvider theme={theme}>
+							<Button
+								variant="text"
+								type="submit"
+								disabled={!id || !title || !state}
+							>
+								Save
+							</Button>
+							<Button variant="text" onClick={handleClose}>
+								Cancel
+							</Button>
+						</ThemeProvider>
 					</form>
 				</Box>
 			</Modal>

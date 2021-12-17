@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
-// import Box from "@mui/material/Box";
 import axios from "axios";
 import TextField from "@mui/material/TextField";
+import EnhancedTable from "./table";
 
 export default function FilterTextField() {
 	const [searchInput, setSearchInput] = useState("");
@@ -15,6 +15,7 @@ export default function FilterTextField() {
 
 	const searchItems = (searchValue) => {
 		setSearchInput(searchValue);
+
 		if (searchInput !== "") {
 			const filteredData = APIData.filter((item) => {
 				return Object.values(item)
@@ -27,35 +28,21 @@ export default function FilterTextField() {
 			setFilteredResults(APIData);
 		}
 	};
+
 	return (
-		<div style={{ padding: "10px" }}>
+		<div>
 			<TextField
 				fullWidth
 				id="standard-basic"
 				label="Filter issues"
 				variant="standard"
 				onChange={(e) => searchItems(e.target.value)}
+				style={{ margin: " 10px 20px" }}
 			/>
-
-			{/* <div>
-				{searchInput.length > 1
-					? filteredResults.map((item) => {
-							return (
-								<>
-									<p>{item.title}</p>
-									<p>{item.state}</p>
-								</>
-							);
-					  })
-					: APIData.map((item) => {
-							return (
-								<>
-									<p>{item.title}</p>
-									<p>{item.state}</p>
-								</>
-							);
-					  })}
-			</div> */}
+			<EnhancedTable
+				searchInput={searchInput}
+				filteredResults={searchInput.length >= 1 ? filteredResults : APIData}
+			/>
 		</div>
 	);
 }

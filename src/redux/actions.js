@@ -14,7 +14,6 @@ const newIssueAction = (issue) => ({
 
 const deleteIssueAction = () => ({
 	type: DELETE_ISSUE,
-	// payload: id,
 });
 const editIssueAction = (id) => ({
 	type: EDIT_ISSUE,

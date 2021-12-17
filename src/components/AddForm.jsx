@@ -4,6 +4,8 @@ import TextField from "@mui/material/TextField";
 import Button from "@mui/material/Button";
 import { useDispatch } from "react-redux";
 import { newIssue } from "../redux/actions";
+import { blue } from "@mui/material/colors";
+import { createTheme, ThemeProvider } from "@mui/material/styles";
 
 import Modal from "@mui/material/Modal";
 
@@ -17,10 +19,17 @@ const style = {
 	transform: "translate(-50%, -50%)",
 	width: 400,
 	bgcolor: "background.paper",
-	border: "2px solid #000",
 	boxShadow: 24,
 	p: 4,
 };
+
+const theme = createTheme({
+	palette: {
+		primary: {
+			main: "#000",
+		},
+	},
+});
 
 const AddForm = () => {
 	const [open, setOpen] = useState(false);
@@ -48,12 +57,20 @@ const AddForm = () => {
 		e.preventDefault();
 		dispatch(newIssue(issue));
 		handleClose();
+		setIssue({
+			id: "",
+			title: "",
+			state: "",
+			url: "",
+			created: "",
+			updated: "",
+		});
 	};
 
 	return (
 		<>
 			<IconButton>
-				<AddIcon onClick={handleOpen} />
+				<AddIcon sx={{ color: blue[500] }} onClick={handleOpen} />
 			</IconButton>
 			<Modal
 				open={open}
@@ -62,42 +79,57 @@ const AddForm = () => {
 				aria-describedby="modal-modal-description"
 			>
 				<Box sx={style}>
-					<h2>Header</h2>
+					<h2>Add new Issue</h2>
 					<form onSubmit={handleSubmit}>
 						<TextField
 							id="standard-search"
-							label="id*"
+							label="id"
 							name="id"
 							value={id}
 							type="text"
 							variant="standard"
-							helperText="Required field"
+							error={id === ""}
+							helperText={id === "" ? "Required field" : " "}
 							onChange={handleChange}
+							fullWidth
+							margin="normal"
+							required
 						/>
 						<br />
 
 						<TextField
 							id="standard-helperText"
-							label="Title*"
+							label="Title"
 							name="title"
 							value={title}
 							type="text"
-							helperText="Required field"
+							error={title === ""}
+							helperText={title === "" ? "Required field" : " "}
 							variant="standard"
 							onChange={handleChange}
+							margin="normal"
+							fullWidth
+							required
 						/>
 
 						<br />
 
 						<TextField
 							id="standard-helperText"
-							label="State*"
+							label="State"
 							name="state"
 							value={state}
 							type="text"
-							helperText="Required field"
+							error={state === ""}
+							helperText={
+								state === "" ? "Required field" : `${state.length}/10`
+							}
 							variant="standard"
 							onChange={handleChange}
+							margin="normal"
+							fullWidth
+							required
+							inputProps={{ maxLength: 10 }}
 						/>
 
 						<br />
@@ -109,6 +141,8 @@ const AddForm = () => {
 							type="text"
 							variant="standard"
 							onChange={handleChange}
+							margin="normal"
+							fullWidth
 						/>
 
 						<br />
@@ -120,6 +154,8 @@ const AddForm = () => {
 							type="text"
 							variant="standard"
 							onChange={handleChange}
+							fullWidth
+							margin="normal"
 						/>
 						<br />
 
@@ -131,15 +167,24 @@ const AddForm = () => {
 							type="text"
 							variant="standard"
 							onChange={handleChange}
+							margin="normal"
+							fullWidth
 						/>
 
 						<br />
-						<Button variant="text" type="submit">
-							Save
-						</Button>
-						<Button variant="text" onClick={handleClose}>
-							Cancel
-						</Button>
+						<ThemeProvider theme={theme}>
+							<Button
+								variant="text"
+								type="submit"
+								disabled={!id || !title || !state}
+								color="primary"
+							>
+								Save
+							</Button>
+							<Button variant="text" onClick={handleClose} color="primary">
+								Cancel
+							</Button>
+						</ThemeProvider>
 					</form>
 				</Box>
 			</Modal>

@@ -134,10 +134,9 @@ EnhancedTableHead.propTypes = {
 	rowCount: PropTypes.number.isRequired,
 };
 
-export default function EnhancedTable() {
+export default function EnhancedTable({ searchInput, filteredResults }) {
 	const [order, setOrder] = React.useState("asc");
 	const [orderBy, setOrderBy] = React.useState("calories");
-	const [selected, setSelected] = React.useState([]);
 	const [page, setPage] = React.useState(0);
 	const [rowsPerPage, setRowsPerPage] = React.useState(5);
 
@@ -145,35 +144,6 @@ export default function EnhancedTable() {
 		const isAsc = orderBy === property && order === "asc";
 		setOrder(isAsc ? "desc" : "asc");
 		setOrderBy(property);
-	};
-
-	const handleSelectAllClick = (event) => {
-		if (event.target.checked) {
-			const newSelecteds = issues.map((n) => n.name);
-			setSelected(newSelecteds);
-			return;
-		}
-		setSelected([]);
-	};
-
-	const handleClick = (event, name) => {
-		const selectedIndex = selected.indexOf(name);
-		let newSelected = [];
-
-		if (selectedIndex === -1) {
-			newSelected = newSelected.concat(selected, name);
-		} else if (selectedIndex === 0) {
-			newSelected = newSelected.concat(selected.slice(1));
-		} else if (selectedIndex === selected.length - 1) {
-			newSelected = newSelected.concat(selected.slice(0, -1));
-		} else if (selectedIndex > 0) {
-			newSelected = newSelected.concat(
-				selected.slice(0, selectedIndex),
-				selected.slice(selectedIndex + 1)
-			);
-		}
-
-		setSelected(newSelected);
 	};
 
 	const handleChangePage = (event, newPage) => {
@@ -185,17 +155,15 @@ export default function EnhancedTable() {
 		setPage(0);
 	};
 
-	// const isSelected = (name) => selected.indexOf(name) !== -1;
-
-	// Avoid a layout jump when reaching the last page with empty rows.
-	const emptyRows =
-		page > 0 ? Math.max(0, (1 + page) * rowsPerPage - issues.length) : 0;
-
 	const dispatch = useDispatch();
-	const { issues } = useSelector((state) => state.data);
+	let { issues } = useSelector((state) => state.data);
 	useEffect(() => {
 		dispatch(loadIssues());
 	}, []);
+
+	if (searchInput !== undefined && searchInput.length >= 1) {
+		issues = filteredResults;
+	}
 
 	return (
 		<Box sx={{ width: "100%" }}>
@@ -205,7 +173,6 @@ export default function EnhancedTable() {
 						<EnhancedTableHead
 							order={order}
 							orderBy={orderBy}
-							onSelectAllClick={handleSelectAllClick}
 							onRequestSort={handleRequestSort}
 							rowCount={issues.length}
 						/>
@@ -218,7 +185,6 @@ export default function EnhancedTable() {
 									return (
 										<TableRow
 											hover
-											onClick={(event) => handleClick(event, issue.name)}
 											role="checkbox"
 											tabIndex={-1}
 											key={issue.id}
