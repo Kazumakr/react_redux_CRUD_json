@@ -1,36 +1,3 @@
 {
-  "issues": [
-    {
-      "id": "new",
-      "title": "new",
-      "state": "new",
-      "url": "",
-      "created": "",
-      "updated": ""
-    },
-    {
-      "id": "a",
-      "title": "a",
-      "state": "a",
-      "url": "",
-      "created": "",
-      "updated": ""
-    },
-    {
-      "id": "abc",
-      "title": "abc",
-      "state": "acb",
-      "url": "",
-      "created": "",
-      "updated": ""
-    },
-    {
-      "id": "abc2",
-      "title": "2abc",
-      "state": "abc2",
-      "url": "",
-      "created": "",
-      "updated": ""
-    }
-  ]
+  "issues": []
 }

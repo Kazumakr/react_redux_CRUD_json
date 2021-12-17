@@ -164,6 +164,7 @@ export default function EnhancedTable({ searchInput, filteredResults }) {
 	if (searchInput !== undefined && searchInput.length >= 1) {
 		issues = filteredResults;
 	}
+	console.log(issues);
 
 	return (
 		<Box sx={{ width: "100%" }}>
@@ -213,6 +214,12 @@ export default function EnhancedTable({ searchInput, filteredResults }) {
 						</TableBody>
 					</Table>
 				</TableContainer>
+				{issues.length == 0 ? (
+					<div style={{ margin: "20px 0" }}>No results</div>
+				) : (
+					<></>
+				)}
+
 				<TablePagination
 					rowsPerPageOptions={[5, 10, 25, 100]}
 					component="div"
